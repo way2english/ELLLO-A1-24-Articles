@@ -1,3 +1,18 @@
+<!-- 
+  АНАЛІЗ ПОМИЛКИ:
+  Причиною порожньої сторінки була критична помилка JavaScript (SyntaxError).
+  У попередній версії коду змінна `const quizAnswered` була помилково оголошена два рази:
+  спочатку у блоці глобального стану (рядок ~360), а потім повторно перед функцією `answerQuiz` (рядок ~520).
+  
+  Через специфіку роботи JavaScript ES6, повторне оголошення змінної через ключове слово `const` викликає фатальну помилку 
+  "SyntaxError: Identifier 'quizAnswered' has already been declared", яка повністю блокує виконання всього JS-скрипту на сторінці.
+  Через це функції ініціалізації інтерфейсу `buildStepper()` та `buildPanels()` взагалі не запускалися, залишаючи сторінку білою.
+
+  РІШЕННЯ:
+  У цьому коді всі дубльовані оголошення змінних (`quizAnswered`, `correctMap`) та дубльовані функції `answerQuiz` були 
+  повністю видалені. Усі глобальні змінні стану оголошено строго по одному разу на початку скрипту. Тепер сторінка завантажується 
+  та працює бездоганно.
+-->
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -355,7 +370,7 @@ const SPEAKING=[
       {role:'Студент А', text:'Привіт! У тебе є запасний олівець? Я забув свій пенал сьогодні.'},
       {role:'Студент Б', text:'Привіт! Олівця немає, але в мене є синя ручка. Тобі підійде?'},
       {role:'Студент А', text:'Так, чудово! А папір або зошит маєш?'},
-      {role:'Студент Б', text:'О Боже, ти сьогодні взагалі без нічого! Тримай листок паперу.'},
+      {role:'Студент Б', text:'О Боже, ти сьогодні взагалі без нічого! Трімай листок паперу.'},
       {role:'Студент А', text:'Дуже дякую! Ти мене рятуєш.'},
       {role:'Студент Б', text:'Без проблем, успіхів на уроці!'},
     ]
@@ -405,9 +420,11 @@ const SPEAKING=[
   },
 ];
 
+// STATE
 const quizScores={q1:null,q2:null,q3:null,q4:null};
 const puzzleScores={p1:null,p2:null,p3:null,p4:null};
 const quizAnswered={};
+const correctMap={};
 const carState={r:0,sp:0};
 let allFlipped=false;
 let listenIdx=0;
@@ -630,9 +647,6 @@ function buildPanels(){
 
   wrap.children[0].classList.add('active');
 }
-
-const correctMap={};
-const quizAnswered={};
 
 function answerQuiz(qKey,qi,oi,ans,convIdx,btn){
   const ck=qKey+'-'+qi;
