@@ -167,7 +167,7 @@ const VOCAB=[
   {en:'eraser',       ua:'гумка (для стирання)'},
   {en:'Perfect',      ua:'Чудово / Ідеально'},
   {en:'paper',        ua:'папір'},
-  {en:'My gosh',      ua:'О Боже! / О Господи!'},
+  {en:'My gosh',      ua:'О Господи! / О Боже!'},
   {en:'sound lovely', ua:'звучить чудово'},
   {en:'a soda',       ua:'газована вода / газировка'},
   {en:'bottle',       ua:'пляшка'},
@@ -373,7 +373,7 @@ const SPEAKING=[
   },
   {
     title:'Діалог 3 з 4', interview:true,
-    note:'🎤 Студент А перекладає запитання англійською → Студент Б відповіть про себе',
+    note:'🎤 Студент А перекладає запитання англійською → Студент Б відповідає про себе',
     lines:[
       {role:'Студент А', text:'У тебе є ручка та олівець із собою зараз?'},
       {role:'Студент Б', blank:true},
@@ -405,7 +405,6 @@ const SPEAKING=[
   },
 ];
 
-// STATE
 const quizScores={q1:null,q2:null,q3:null,q4:null};
 const puzzleScores={p1:null,p2:null,p3:null,p4:null};
 const quizAnswered={};
@@ -444,7 +443,6 @@ function updateFab(){
   document.getElementById('fabScore').textContent=g+'/'+t;
 }
 
-// BUILD STEPS
 function buildStepper(){
   const el=document.getElementById('stepper');
   STEPS.forEach((s,i)=>{
@@ -457,17 +455,15 @@ function buildStepper(){
   });
 }
 
-// BUILD PANELS
 function buildPanels(){
   const wrap=document.getElementById('panels-container');
 
-  // 0 Watch
   const p0=mkPanel(0);
   p0.innerHTML=`
     <div class="sec-title">🎬 Watch</div>
     <div class="sec-sub">Подивись відео розмов — просто слухай і дивись, концентруючись на використанні артиклів.</div>
     <div class="card">
-      <div class="vimeo-wrap"><iframe src="https://player.vimeo.com/video/950477000" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="vimeo-wrap"><iframe src="https://player.vimeo.com/video/1013755225" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
       <ul class="conv-list">
         <li>🖊️ Conversation 1 — Do you have a pen?</li>
         <li>🥪 Conversation 2 — Would you like a sandwich?</li>
@@ -478,11 +474,15 @@ function buildPanels(){
     <div class="nav-row"><div></div><button class="nav-btn next" onclick="goStep(1)">Далі →</button></div>`;
   wrap.appendChild(p0);
 
-  // 1 Words
   const p1=mkPanel(1);
   let grid='';
   VOCAB.forEach(v=>{
-    grid+='<div class="vocab-item"><div class="vocab-word">'+v.en+'<div class="vocab-ua">'+v.ua+'</div></div><button class="speak-btn" onclick="speak(\''+v.en.replace(/'/g,"\\'")+'\')" >🔊</button></div>';
+    grid += '<div class="vocab-item">' +
+      '<div class="vocab-word">' + v.en +
+        '<div class="vocab-ua">' + v.ua + '</div>' +
+      '</div>' +
+      '<button class="speak-btn" onclick="speak(\'' + v.en.replace(/'/g, "\\'") + '\')">🔊</button>' +
+    '</div>';
   });
   p1.innerHTML=`
     <div class="sec-title">📚 Слова</div>
@@ -497,7 +497,6 @@ function buildPanels(){
     </div>`;
   wrap.appendChild(p1);
 
-  // 2–5 Conversations
   CONVS.forEach((c,i)=>{
     const si=i+2;
     const qKey='q'+(i+1);
@@ -526,7 +525,6 @@ function buildPanels(){
     wrap.appendChild(pd);
   });
 
-  // 6 Puzzle (No .pzl-word-bank list block in DOM)
   const p6=mkPanel(6);
   let pHtml='';
   PUZZLES.forEach((pz,pi)=>{
@@ -539,9 +537,9 @@ function buildPanels(){
         lh+='</div>';
       }
     });
-    pHtml+=`
+    pHtml += `
       <div class="card" id="pzl-card-${pi}">
-        <div style="font-weight:800;font-size:16px;margin-bottom:12px;">${pz.title}</div>
+        <div style="font-weight:800;font-size:16px;margin-bottom:16px;">${pz.title}</div>
         ${lh}
         <div class="pzl-audio-label">💡 Якщо треба — прослухай аудіо ще раз — ${pz.title}</div>
         <audio src="${pz.audio}" controls style="width:100%;"></audio><br>
@@ -559,7 +557,6 @@ function buildPanels(){
     </div>`;
   wrap.appendChild(p6);
 
-  // 7 Reading
   const p7=mkPanel(7);
   let rSlides='';
   CONVS.forEach((c,i)=>{
@@ -568,7 +565,7 @@ function buildPanels(){
   });
   p7.innerHTML=`
     <div class="sec-title">📖 Читання</div>
-    <div class="sec-sub">Читай кожну розмову вголос і роби усний переклад. Тут перекладу немає — тренуйся самостійно!</div>
+    <div class="sec-sub">Читай кожну розмову вголос і роби усний переклад. Тут перекладу немає — ти можеш!</div>
     <div class="card">
       <div class="reading-tip">🇺🇦 Прочитай репліку англійською та переклади її усно українською для себе або партнера.</div>
       ${rSlides}
@@ -584,7 +581,6 @@ function buildPanels(){
     </div>`;
   wrap.appendChild(p7);
 
-  // 8 Flashcards
   const p8=mkPanel(8);
   let fcHtml=FLASHCARDS.map((fc,i)=>`
     <div class="fc-card" id="fc-${i}" onclick="flipCard(${i})">
@@ -606,7 +602,6 @@ function buildPanels(){
     </div>`;
   wrap.appendChild(p8);
 
-  // 9 Speaking
   const p9=mkPanel(9);
   let spSlides=SPEAKING.map((d,di)=>{
     let note=d.interview?'<div class="sp-interview-note">'+d.note+'</div>':'';
@@ -636,13 +631,15 @@ function buildPanels(){
   wrap.children[0].classList.add('active');
 }
 
-// QUIZ LOGIC
 const correctMap={};
+const quizAnswered={};
+
 function answerQuiz(qKey,qi,oi,ans,convIdx,btn){
   const ck=qKey+'-'+qi;
   if(quizAnswered[ck])return;
   quizAnswered[ck]=true;
   correctMap[ck]=(oi===ans);
+
   const allOpts=btn.parentElement.querySelectorAll('.quiz-opt');
   allOpts.forEach(b=>b.disabled=true);
   if(oi===ans){
@@ -651,19 +648,20 @@ function answerQuiz(qKey,qi,oi,ans,convIdx,btn){
     btn.classList.add('wrong');
     allOpts[ans].classList.add('correct');
   }
+
   const total=CONVS[convIdx].questions.length;
-  const allDone=Array.from({length:total},(_,k)=>!!quizAnswered[qKey+'-'+k]).every(Boolean);
+  const allDone=Array.from({length: total}, (_, k) => !!quizAnswered[qKey + '-' + k]).every(Boolean);
   if(allDone){
     let got=0;
     for(let k=0;k<total;k++){if(correctMap[qKey+'-'+k])got++;}
     quizScores[qKey]={got,total};
-    updateFab();markDone(convIdx+2);
+    updateFab();
+    markDone(convIdx+2);
     document.getElementById('qresult-'+convIdx).innerHTML=
       '<div class="quiz-result '+(got===total?'pass':'fail')+'">'+(got===total?'🏆':'💪')+' Результат: '+got+'/'+total+'</div>';
   }
 }
 
-// PUZZLE LOGIC
 function checkPuzzle(pi,pKey){
   const card=document.getElementById('pzl-card-'+pi);
   const sels=card.querySelectorAll('.pzl-sel[data-pi="'+pi+'"]');
@@ -674,11 +672,11 @@ function checkPuzzle(pi,pKey){
     else sel.classList.add('wrong');
   });
   puzzleScores[pKey]={got,total:sels.length};
-  updateFab();markDone(6);
+  updateFab();
+  markDone(6);
   document.getElementById('pzl-score-'+pi).textContent='Результат: '+got+'/'+sels.length;
 }
 
-// CAROUSEL NAV
 function carNav(id,dir){
   carState[id]=Math.max(0,Math.min(3,carState[id]+dir));
   const idx=carState[id];
@@ -691,14 +689,12 @@ function carNav(id,dir){
   if(id==='sp'&&idx===3)markDone(9);
 }
 
-// FLASHCARDS LOGIC
 function flipCard(i){document.getElementById('fc-'+i).classList.toggle('flipped');markDone(8);}
 function flipAll(){
   allFlipped=!allFlipped;
   document.querySelectorAll('.fc-card').forEach(c=>c.classList.toggle('flipped',allFlipped));
 }
 
-// RESULTS OVERVIEW MODAL
 function openResults(){
   let rows='',g=0,t=0;
   for(let i=1;i<=4;i++){const s=quizScores['q'+i];const v=s?s.got+'/'+s.total:'—';if(s){g+=s.got;t+=s.total;}rows+='<tr><td>Quiz '+i+'</td><td>'+v+'</td></tr>';}
